@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/Imagen">
+        <file>pato.png</file>
+        <file>pacman.png</file>
+        <file>pinkghost.png</file>
+        <file>black.png</file>
+        <file>pacmanD.png</file>
+        <file>pacmanL.png</file>
+        <file>pacmanU.png</file>
+        <file>suelo.jpg</file>
+        <file>marmol.jpg</file>
+        <file>bloques.jpg</file>
+        <file>muro.jpg</file>
+        <file>pergamino.png</file>
+    </qresource>
+    <qresource prefix="/new/prefix1"/>
+</RCC>
