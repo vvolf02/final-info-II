@@ -1,17 +1,22 @@
 #ifndef PARED_H
 #define PARED_H
-#include <QGraphicsItem>
+#include <QGraphicsRectItem>
+#include <QBrush>
+#include <QPixmap>
 #include <QPainter>
 
-class pared: public QGraphicsItem
+class pared: public QGraphicsRectItem
 {
-    int posx, posy,w, h;
+    int posx, posy, w, h, id;
+    QPixmap currentTexture;
 public:
     pared();
-    pared(int x, int y, int w, int h);
+    pared(int posx, int posy, int w, int h, int id=0);
+    int getId() const;
     QRectF boundingRect() const;
     void paint(QPainter *painter,
-                const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+               const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
+    void setTexture(const QString& texturePath);
 };
 
 #endif // PARED_H

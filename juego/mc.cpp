@@ -20,10 +20,10 @@ QRectF mc::boundingRect() const
 
 void mc::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //painter->setBrush(Qt::yellow);
-    //painter->drawEllipse(boundingRect());
-    QPixmap pixmap(":/Imagen/pacman.png");
-    painter->drawPixmap(boundingRect(),pixmap,pixmap.rect());
+    painter->setBrush(Qt::black);
+    painter->drawEllipse(boundingRect());
+    //QPixmap pixmap(":/Imagen/pacman.png");
+    //painter->drawPixmap(boundingRect(),pixmap,pixmap.rect());
 }
 
 void mc::MoverDer()

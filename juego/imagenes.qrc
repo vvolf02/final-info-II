@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/Imagen">
+        <file>black.png</file>
+        <file>bloques.jpg</file>
+        <file>marmol.jpg</file>
+        <file>muro.jpg</file>
+        <file>pato.png</file>
+        <file>pergamino.png</file>
+        <file>suelo.jpg</file>
+        <file>escaleras.jpg</file>
+    </qresource>
+</RCC>

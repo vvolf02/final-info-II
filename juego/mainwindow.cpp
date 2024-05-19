@@ -5,63 +5,73 @@
 #include <QGraphicsPixmapItem>
 #include <QBrush>
 #include <QPixmap>
+#include <QFile>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , score(0)
+    , timeLeft(90)
 {
     string row, posx, posy, ancho, alto, radio;
     int x, y, h, al, r;
-    static constexpr int enemyCount = 4;
     ui->setupUi(this);
-    ball = new mc(13, 175, 12);
-    scene = new QGraphicsScene();
+    prota=new mc(13, 175, 12);
+    scene=new QGraphicsScene();
     scene->setSceneRect(0, 0, 867, 389);
     QPixmap background(":/Imagen/marmol.jpg");
     scene->setBackgroundBrush(background);
     ui->graphicsView->setScene(scene);
-    scene->addItem(ball);
-
+    scene->addItem(prota);
     ifstream file("paredes.txt");
-    while (getline(file, row)) {
+    while (getline(file, row))
+    {
         if (row.empty()) continue;
-        posx = grupito(row, ',');
-        x = stoi(posx);
-        row = resize(row, ',');
-        posy = grupito(row, ',');
-        y = stoi(posy);
-        row = resize(row, ',');
-        ancho = grupito(row, ',');
-        h = stoi(ancho);
-        row = resize(row, ',');
-        alto = grupito(row, ',');
-        al = stoi(alto);
-        paredes.push_back(new pared(x, y, h, al));
+        posx=grupito(row, ',');
+        x=stoi(posx);
+        row=resize(row, ',');
+        posy=grupito(row, ',');
+        y=stoi(posy);
+        row=resize(row, ',');
+        ancho=grupito(row, ',');
+        h=stoi(ancho);
+        row=resize(row, ',');
+        alto=grupito(row, ',');
+        al=stoi(alto);
+        int id=0;
+        paredes.push_back(new pared(x, y, h, al, id));
         scene->addItem(paredes.back());
     }
     file.close();
-    if (!paredes.empty()) {
+    if (!paredes.empty())
+    {
         scene->addItem(paredes.back());
     }
+    pared* npared=new pared(349, 205, 172, 62, 1);
+    npared->setTexture(":/Imagen/escaleras.jpg");
+    paredes.push_back(npared);
+    scene->addItem(paredes.back());
     row="";
     ifstream archivo("punticos.txt");
-    while (getline(archivo, row)) {
+    while (getline(archivo, row))
+    {
         if (row.empty()) continue;
-        posx = grupito(row, ',');
-        x = stoi(posx);
-        row = resize(row, ',');
-        posy = grupito(row, ',');
-        y = stoi(posy);
-        row = resize(row, ',');
-        radio = grupito(row, ',');
-        r = stoi(radio);
-        puntos.push_back(new punto(x, y, r));
-        scene->addItem(puntos.back());
+        posx=grupito(row, ',');
+        x=stoi(posx);
+        row=resize(row, ',');
+        posy=grupito(row, ',');
+        y=stoi(posy);
+        row=resize(row, ',');
+        radio=grupito(row, ',');
+        r=stoi(radio);
+        punto.push_back(new puntos(x, y, r));
+        scene->addItem(punto.back());
     }
     archivo.close();
-    if (!puntos.empty()) {
-        scene->addItem(puntos.back());
+    if (!punto.empty())
+    {
+        scene->addItem(punto.back());
     }
 
     /*scene->addItem(paredes.back());
@@ -335,7 +345,10 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(puntos.back());
     puntos.push_back(new punto(106, 212, 5));
     scene->addItem(puntos.back());*/
-    ui->lcdNumber->display(score);
+    ui->lcdNumber->display(timeLeft);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::updateTimer);
+    timer->start(1000); // Actualizar cada segundo
 }
 
 MainWindow::~MainWindow()
@@ -348,42 +361,42 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if(event->key()==Qt::Key_W)
     {
         if(!EvaluarColision())
-            ball->MoverArriba();
+            prota->MoverArriba();
         else
-            ball->MoverAbajo();
+            prota->MoverAbajo();
         colPuntos();
     }
     else if(event->key()==Qt::Key_S)
     {
         if(!EvaluarColision())
-            ball->MoverAbajo();
+            prota->MoverAbajo();
         else
-            ball->MoverArriba();
+            prota->MoverArriba();
         colPuntos();
     }
     else if(event->key()==Qt::Key_D)
     {
         if(!EvaluarColision())
-            ball->MoverDer();
+            prota->MoverDer();
         else
-            ball->MoverIzq();
+            prota->MoverIzq();
         colPuntos();
     }
     else if(event->key()==Qt::Key_A)
     {   if(!EvaluarColision())
-            ball->MoverIzq();
+            prota->MoverIzq();
         else
-            ball->MoverDer();
+            prota->MoverDer();
         colPuntos();
     }
 }
 
 bool MainWindow::EvaluarColision()
 {
-    for(int i=0; i<paredes.size();i++)
+    for(int i=0; i<paredes.size(); i++)
     {
 
-        if(paredes.at(i)->collidesWithItem(ball))
+        if(paredes.at(i)->collidesWithItem(prota))
             return true;
     }
     return false;
@@ -391,38 +404,51 @@ bool MainWindow::EvaluarColision()
 
 void MainWindow::colPuntos()
 {
-    for (int i = puntos.size() - 1; i >= 0; i--)
+    for (int i=punto.size()-1; i>=0; i--)
     {
-        if (puntos.at(i)->collidesWithItem(ball))
+        if (punto.at(i)->collidesWithItem(prota))
         {
-            scene->removeItem(puntos.at(i));
-            delete puntos.at(i);
-            puntos.erase(puntos.begin() + i); // Eliminar el punto de la lista
+            scene->removeItem(punto.at(i));
+            delete punto.at(i);
+            punto.erase(punto.begin() + i); // Eliminar el punto de la lista
             score++; // Incrementar marcador
             ui->lcdNumber->display(score); // Actualizar valor del LCD
         }
     }
 }
 
+void MainWindow::updateTimer()
+{
+    if(timeLeft > 0)
+    {
+        timeLeft--;
+        ui->lcdNumber->display(timeLeft);
+        if(timeLeft == 0)
+        {
+            timer->stop();
+        }
+    }
+}
+
 string MainWindow::resize(string row, char caracter) //recorta el tamaño del string, quitando el contenido existente hasta encontrar el caracter ingresado
 {
-    string fila = "";
-    int posicion = row.find(caracter);
-    int tamano = row.size();
-    for(int i = posicion + 1; i < tamano; i++)
+    string fila="";
+    int posicion=row.find(caracter);
+    int tamano=row.size();
+    for(int i=posicion+1; i<tamano; i++)
     {
-        fila += row[i];
+        fila+=row[i];
     }
     return fila;
 }
 
 string MainWindow::grupito(string row, char caracter)
 {
-    string grupo = "";
-    int posicion = row.find(caracter);
-    for(int i = 0; i < posicion; i++)
+    string grupo="";
+    int posicion=row.find(caracter);
+    for(int i=0; i<posicion; i++)
     {
-        grupo += row[i];
+        grupo+=row[i];
     }
     return grupo;
 }

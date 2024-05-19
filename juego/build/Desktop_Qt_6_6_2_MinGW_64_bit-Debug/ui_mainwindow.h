@@ -33,19 +33,19 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(900, 700);
+        MainWindow->resize(1196, 600);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         graphicsView = new QGraphicsView(centralwidget);
         graphicsView->setObjectName("graphicsView");
-        graphicsView->setGeometry(QRect(10, 110, 871, 401));
+        graphicsView->setGeometry(QRect(180, 100, 871, 401));
         lcdNumber = new QLCDNumber(centralwidget);
         lcdNumber->setObjectName("lcdNumber");
-        lcdNumber->setGeometry(QRect(420, 80, 64, 23));
+        lcdNumber->setGeometry(QRect(580, 70, 64, 23));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 900, 21));
+        menubar->setGeometry(QRect(0, 0, 1196, 21));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");

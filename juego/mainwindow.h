@@ -3,13 +3,13 @@
 
 #include <QMainWindow>
 #include <mc.h>
-#include <enemy.h>
-#include <punto.h>
+#include <puntos.h>
 #include <QGraphicsScene>
 #include <QKeyEvent>
 #include <pared.h>
 #include <QList>
 #include <string>
+#include <QTimer>
 
 using namespace std;
 
@@ -25,22 +25,23 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void keyPressEvent( QKeyEvent *event);
-    bool EvaluarColision();
-    void colPuntos();
-    int score;
-    string resize(string row, char caracter);
-    string grupito(string row, char caracter);
 
 private slots:
 
 private:
     Ui::MainWindow *ui;
-    mc *ball;
-    enemy *ghost;
+    mc *prota;
     QGraphicsScene *scene;
     QKeyEvent *event;
     QList<pared *> paredes;
-    QList<punto *> puntos;
-
+    QList<puntos *> punto;
+    bool EvaluarColision();
+    void colPuntos();
+    QTimer *timer;
+    int timeLeft;
+    int score;
+    string resize(string row, char caracter);
+    string grupito(string row, char caracter);
+    void updateTimer();
 };
 #endif // MAINWINDOW_H
